@@ -1,23 +1,32 @@
 require("@nomicfoundation/hardhat-toolbox");
+require("dotenv").config();
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
   defaultNetwork: "hardhat",
-  solidity: "0.6.12",
+  solidity: {
+    version: "0.6.12",
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 200,
+      },
+    },
+  },
   networks: {
     localhost: {
       url: "http://127.0.0.1:8545",
     },
     hardhat: {
-      forking: {
-        url: "https://omniscient-radial-dew.matic-testnet.discover.quiknode.pro/589dde8b81587955e08b391727cabcdfc61f72f0/",
-      },
     },
-    mainnet: {
-      url: "polygon-rpc-node-url",
-      chainId: 56,
-      gasPrice: 20000000000,
-      //accounts: {mnemonic: mnemonic}
+    matic: {
+      url: process.env.MATIC_RPC,
+      accounts: [process.env.PRIVATE_KEY],
     },
-  }
+    mumbai: {
+      url: process.env.MUMBAI_RPC,
+      accounts: [process.env.PRIVATE_KEY],
+      chainId: 80001,
+    },
+  },
 };
