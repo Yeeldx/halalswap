@@ -61,7 +61,7 @@ describe("SushiToken", function () {
     expect(carolBal).to.equal(110);
   });
 
-  it.only("should fail if you try to do bad transfers", async () => {
+  it("should fail if you try to do bad transfers", async () => {
     await sushi
       .connect(owner)
       .mint(alice.address, "100", { from: owner.address });
