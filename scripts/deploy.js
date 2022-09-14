@@ -6,12 +6,14 @@
 // global scope, and execute the script.
 const hre = require("hardhat");
 const web3 = require("web3");
+require("dotenv").config();
+
 
 async function main() {
   
   const [owner, otherAccount] = await ethers.getSigners();
 
-  const WETH = await hre.ethers.getContractFactory("WETH");
+  const weth = await hre.ethers.getContractAt("WETH", process.env.WMATIC_MUMBAI)//await hre.ethers.getContractFactory("WETH");
   const MockERC20 = await hre.ethers.getContractFactory("MockERC20");
   const SushiToken = await hre.ethers.getContractFactory("SushiToken");
   const MasterChef = await hre.ethers.getContractFactory("MasterChef");
@@ -21,8 +23,8 @@ async function main() {
   const Factory = await hre.ethers.getContractFactory("UniswapV2Factory");
   const Router = await hre.ethers.getContractFactory("UniswapV2Router02");
 
-  const weth = await WETH.deploy();
-  await weth.deployed();
+  // const weth = await WETH.deploy();
+  // await weth.deployed();
 
   const tokenA = await MockERC20.deploy(
     "Token A",
