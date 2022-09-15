@@ -8,12 +8,13 @@ const hre = require("hardhat");
 const web3 = require("web3");
 require("dotenv").config();
 
-
 async function main() {
-  
   const [owner, otherAccount] = await ethers.getSigners();
 
-  const weth = await hre.ethers.getContractAt("WETH", process.env.WMATIC_MUMBAI)//await hre.ethers.getContractFactory("WETH");
+  const weth = await hre.ethers.getContractAt(
+    "WETH",
+    process.env.WMATIC_MUMBAI
+  ); //await hre.ethers.getContractFactory("WETH");
   const MockERC20 = await hre.ethers.getContractFactory("MockERC20");
   const SushiToken = await hre.ethers.getContractFactory("SushiToken");
   const MasterChef = await hre.ethers.getContractFactory("MasterChef");
@@ -32,6 +33,7 @@ async function main() {
     web3.utils.toWei("1000")
   );
   await tokenA.deployed();
+  console.log("TokenA: ", tokenA.address);
 
   const tokenB = await MockERC20.deploy(
     "Token B",
@@ -39,18 +41,22 @@ async function main() {
     web3.utils.toWei("1000")
   );
   await tokenB.deployed();
+  console.log("TokenB: ", tokenB.address);
 
   const factory = await Factory.deploy(owner.address);
   await factory.deployed();
+  console.log("Factory: ", factory.address);
 
   await factory.createPair(weth.address, tokenA.address);
   await factory.createPair(weth.address, tokenB.address);
 
   const router = await Router.deploy(factory.address, weth.address);
   await router.deployed();
+  console.log("Router: ", router.address);
 
   const sushiToken = await SushiToken.deploy();
   await sushiToken.deployed();
+  console.log("SushiToken: ", sushiToken.address);
 
   const masterChef = await MasterChef.deploy(
     sushiToken.address,
@@ -60,11 +66,13 @@ async function main() {
     1
   );
   await masterChef.deployed();
+  console.log("MasterChef: ", masterChef.address);
 
   await sushiToken.transferOwnership(masterChef.address);
 
   const sushiBar = await SushiBar.deploy(sushiToken.address);
   await sushiBar.deployed();
+  console.log("SushiBar: ", sushiBar.address);
 
   const sushiMaker = await SushiMaker.deploy(
     factory.address,
@@ -73,6 +81,8 @@ async function main() {
     weth.address
   );
   await sushiMaker.deployed();
+  console.log('SushiMaker: ', sushiMaker.address);
+
   await factory.setFeeTo(sushiMaker.address);
 
   const migrator = await Migrator.deploy(
@@ -83,6 +93,7 @@ async function main() {
   );
 
   await migrator.deployed();
+  console.log('Migrator: ', migrator.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
