@@ -46,6 +46,7 @@ async function main() {
   const factory = await Factory.deploy(owner.address);
   await factory.deployed();
   console.log("Factory: ", factory.address);
+  console.log("pairCodeHash: ", await factory.pairCodeHash());
 
   await factory.createPair(weth.address, tokenA.address);
   await factory.createPair(weth.address, tokenB.address);

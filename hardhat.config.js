@@ -18,6 +18,9 @@ module.exports = {
       url: "http://127.0.0.1:8545",
     },
     hardhat: {
+      forking: {
+        url: process.env.MUMBAI_RPC
+      }
     },
     matic: {
       url: process.env.MATIC_RPC,
