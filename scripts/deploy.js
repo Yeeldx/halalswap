@@ -16,10 +16,10 @@ async function main() {
     process.env.WMATIC_MUMBAI
   ); //await hre.ethers.getContractFactory("WETH");
   const MockERC20 = await hre.ethers.getContractFactory("MockERC20");
-  const SushiToken = await hre.ethers.getContractFactory("SushiToken");
+  const YeeldxToken = await hre.ethers.getContractFactory("YeeldxToken");
   const MasterChef = await hre.ethers.getContractFactory("MasterChef");
-  const SushiBar = await hre.ethers.getContractFactory("SushiBar");
-  const SushiMaker = await hre.ethers.getContractFactory("SushiMaker");
+  const YeeldxBar = await hre.ethers.getContractFactory("YeeldxBar");
+  const YeeldxMaker = await hre.ethers.getContractFactory("YeeldxMaker");
   const Migrator = await hre.ethers.getContractFactory("Migrator");
   const Factory = await hre.ethers.getContractFactory("UniswapV2Factory");
   const Router = await hre.ethers.getContractFactory("UniswapV2Router02");
@@ -55,12 +55,12 @@ async function main() {
   await router.deployed();
   console.log("Router: ", router.address);
 
-  const sushiToken = await SushiToken.deploy();
-  await sushiToken.deployed();
-  console.log("SushiToken: ", sushiToken.address);
+  const yeeldxToken = await YeeldxToken.deploy();
+  await yeeldxToken.deployed();
+  console.log("YeeldxToken: ", yeeldxToken.address);
 
   const masterChef = await MasterChef.deploy(
-    sushiToken.address,
+    yeeldxToken.address,
     owner.address,
     web3.utils.toWei("100"),
     1,
@@ -69,22 +69,22 @@ async function main() {
   await masterChef.deployed();
   console.log("MasterChef: ", masterChef.address);
 
-  await sushiToken.transferOwnership(masterChef.address);
+  await yeeldxToken.transferOwnership(masterChef.address);
 
-  const sushiBar = await SushiBar.deploy(sushiToken.address);
-  await sushiBar.deployed();
-  console.log("SushiBar: ", sushiBar.address);
+  const yeeldxBar = await YeeldxBar.deploy(yeeldxToken.address);
+  await yeeldxBar.deployed();
+  console.log("YeeldxBar: ", yeeldxBar.address);
 
-  const sushiMaker = await SushiMaker.deploy(
+  const yeeldxMaker = await YeeldxMaker.deploy(
     factory.address,
-    sushiBar.address,
-    sushiToken.address,
+    yeeldxBar.address,
+    yeeldxToken.address,
     weth.address
   );
-  await sushiMaker.deployed();
-  console.log('SushiMaker: ', sushiMaker.address);
+  await yeeldxMaker.deployed();
+  console.log('YeeldxMaker: ', yeeldxMaker.address);
 
-  await factory.setFeeTo(sushiMaker.address);
+  await factory.setFeeTo(yeeldxMaker.address);
 
   const migrator = await Migrator.deploy(
     masterChef.address,
