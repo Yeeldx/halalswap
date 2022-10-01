@@ -5,20 +5,16 @@ require("dotenv").config();
 async function main() {
   const [owner, otherAccount] = await ethers.getSigners();
 
-  const weth = await hre.ethers.getContractAt(
-    "WETH",
-    process.env.WMATIC_MUMBAI
-  ); 
-  const DragonLair = await hre.ethers.getContractFactory("DragonLair");
-  const Quick = await hre.ethers.getContractFactory("Quick");
+  const Yeeld = await hre.ethers.getContractFactory("Yeeld");
+  const YeeldGovernor = await hre.ethers.getContractFactory("YeeldGovernor");
 
-  const quick = await Quick.deploy(process.env.GATEWAY_ADDRESS);
-  await quick.deployed();
-  console.log("Quick: ", quick.address);
+  const yeeld = await Yeeld.deploy(process.env.GATEWAY_ADDRESS);
+  await yeeld.deployed();
+  console.log("Yeeld: ", yeeld.address);
 
-  const dragonLair = await DragonLair.deploy(quick.address);
-  await dragonLair.deployed();
-  console.log("DragonLair: ", dragonLair.address);
+  const yeeldGovernor = await YeeldGovernor.deploy(yeeld.address);
+  await yeeldGovernor.deployed();
+  console.log("YeeldGovernor: ", yeeldGovernor.address);
 
 }
 
