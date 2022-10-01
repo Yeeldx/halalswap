@@ -1,10 +1,4 @@
-/**
- *Submitted for verification at Etherscan.io on 2020-09-16
-*/
-
-/**
- *Submitted for verification at Etherscan.io on 2020-09-15
-*/
+// SPDX-License-Identifier: GPL-3.0
 
 pragma solidity =0.6.12;
 pragma experimental ABIEncoderV2;
@@ -194,18 +188,18 @@ library SafeMath {
     }
 }
 
-contract Quick {
+contract Yeeld {
     /// @notice EIP-20 token name for this token
-    string public constant name = "Quickswap";
+    string public constant name = "Yeeldswap";
 
     /// @notice EIP-20 token symbol for this token
-    string public constant symbol = "QUICK";
+    string public constant symbol = "Yeeld";
 
     /// @notice EIP-20 token decimals for this token
     uint8 public constant decimals = 18;
 
     /// @notice Total number of tokens in circulation
-    uint public totalSupply = 0; // QUICK
+    uint public totalSupply = 0; // Yeeld
 
     /// @notice Allowance amounts on behalf of others
     mapping (address => mapping (address => uint96)) internal allowances;
@@ -255,7 +249,7 @@ contract Quick {
     event Approval(address indexed owner, address indexed spender, uint256 amount);
 
     /**
-     * @notice Construct a new Quick token
+     * @notice Construct a new Yeeld token
      * @param gateway_ The gateway contract address
      */
     constructor(address gateway_) public {
@@ -276,7 +270,7 @@ contract Quick {
     {
         require(msg.sender == gateway,  "Invalid access");
         uint256 rawAmount = abi.decode(depositData, (uint256));
-        uint96 amount = safe96(rawAmount, "Quick::deposit: amount exceeds 96 bits");
+        uint96 amount = safe96(rawAmount, "Yeeld::deposit: amount exceeds 96 bits");
 
         _mint(user, amount);
     }
@@ -287,7 +281,7 @@ contract Quick {
      * @param rawAmount amount of tokens to withdraw
      */
     function withdraw(uint256 rawAmount) external {
-        uint96 amount = safe96(rawAmount, "Quick::withdraw: amount exceeds 96 bits");
+        uint96 amount = safe96(rawAmount, "Yeeld::withdraw: amount exceeds 96 bits");
         _burn(msg.sender, amount);
     }
 
@@ -314,7 +308,7 @@ contract Quick {
         if (rawAmount == uint(-1)) {
             amount = uint96(-1);
         } else {
-            amount = safe96(rawAmount, "Quick::approve: amount exceeds 96 bits");
+            amount = safe96(rawAmount, "Yeeld::approve: amount exceeds 96 bits");
         }
 
         allowances[msg.sender][spender] = amount;
@@ -338,16 +332,16 @@ contract Quick {
         if (rawAmount == uint(-1)) {
             amount = uint96(-1);
         } else {
-            amount = safe96(rawAmount, "Quick::permit: amount exceeds 96 bits");
+            amount = safe96(rawAmount, "Yeeld::permit: amount exceeds 96 bits");
         }
 
         bytes32 domainSeparator = keccak256(abi.encode(DOMAIN_TYPEHASH, keccak256(bytes(name)), getChainId(), address(this)));
         bytes32 structHash = keccak256(abi.encode(PERMIT_TYPEHASH, owner, spender, rawAmount, nonces[owner]++, deadline));
         bytes32 digest = keccak256(abi.encodePacked("\x19\x01", domainSeparator, structHash));
         address signatory = ecrecover(digest, v, r, s);
-        require(signatory != address(0), "Quick::permit: invalid signature");
-        require(signatory == owner, "Quick::permit: unauthorized");
-        require(now <= deadline, "Quick::permit: signature expired");
+        require(signatory != address(0), "Yeeld::permit: invalid signature");
+        require(signatory == owner, "Yeeld::permit: unauthorized");
+        require(now <= deadline, "Yeeld::permit: signature expired");
 
         allowances[owner][spender] = amount;
 
@@ -370,7 +364,7 @@ contract Quick {
      * @return Whether or not the transfer succeeded
      */
     function transfer(address dst, uint rawAmount) external returns (bool) {
-        uint96 amount = safe96(rawAmount, "Quick::transfer: amount exceeds 96 bits");
+        uint96 amount = safe96(rawAmount, "Yeeld::transfer: amount exceeds 96 bits");
         _transferTokens(msg.sender, dst, amount);
         return true;
     }
@@ -385,10 +379,10 @@ contract Quick {
     function transferFrom(address src, address dst, uint rawAmount) external returns (bool) {
         address spender = msg.sender;
         uint96 spenderAllowance = allowances[src][spender];
-        uint96 amount = safe96(rawAmount, "Quick::approve: amount exceeds 96 bits");
+        uint96 amount = safe96(rawAmount, "Yeeld::approve: amount exceeds 96 bits");
 
         if (spender != src && spenderAllowance != uint96(-1)) {
-            uint96 newAllowance = sub96(spenderAllowance, amount, "Quick::transferFrom: transfer amount exceeds spender allowance");
+            uint96 newAllowance = sub96(spenderAllowance, amount, "Yeeld::transferFrom: transfer amount exceeds spender allowance");
             allowances[src][spender] = newAllowance;
 
             emit Approval(src, spender, newAllowance);
@@ -420,9 +414,9 @@ contract Quick {
         bytes32 structHash = keccak256(abi.encode(DELEGATION_TYPEHASH, delegatee, nonce, expiry));
         bytes32 digest = keccak256(abi.encodePacked("\x19\x01", domainSeparator, structHash));
         address signatory = ecrecover(digest, v, r, s);
-        require(signatory != address(0), "Quick::delegateBySig: invalid signature");
-        require(nonce == nonces[signatory]++, "Quick::delegateBySig: invalid nonce");
-        require(now <= expiry, "Quick::delegateBySig: signature expired");
+        require(signatory != address(0), "Yeeld::delegateBySig: invalid signature");
+        require(nonce == nonces[signatory]++, "Yeeld::delegateBySig: invalid nonce");
+        require(now <= expiry, "Yeeld::delegateBySig: signature expired");
         return _delegate(signatory, delegatee);
     }
 
@@ -444,7 +438,7 @@ contract Quick {
      * @return The number of votes the account had as of the given block
      */
     function getPriorVotes(address account, uint blockNumber) public view returns (uint96) {
-        require(blockNumber < block.number, "Quick::getPriorVotes: not yet determined");
+        require(blockNumber < block.number, "Yeeld::getPriorVotes: not yet determined");
 
         uint32 nCheckpoints = numCheckpoints[account];
         if (nCheckpoints == 0) {
@@ -488,11 +482,11 @@ contract Quick {
     }
 
     function _transferTokens(address src, address dst, uint96 amount) internal {
-        require(src != address(0), "Quick::_transferTokens: cannot transfer from the zero address");
-        require(dst != address(0), "Quick::_transferTokens: cannot transfer to the zero address");
+        require(src != address(0), "Yeeld::_transferTokens: cannot transfer from the zero address");
+        require(dst != address(0), "Yeeld::_transferTokens: cannot transfer to the zero address");
 
-        balances[src] = sub96(balances[src], amount, "Quick::_transferTokens: transfer amount exceeds balance");
-        balances[dst] = add96(balances[dst], amount, "Quick::_transferTokens: transfer amount overflows");
+        balances[src] = sub96(balances[src], amount, "Yeeld::_transferTokens: transfer amount exceeds balance");
+        balances[dst] = add96(balances[dst], amount, "Yeeld::_transferTokens: transfer amount overflows");
         emit Transfer(src, dst, amount);
 
         _moveDelegates(delegates[src], delegates[dst], amount);
@@ -503,21 +497,21 @@ contract Quick {
             if (srcRep != address(0)) {
                 uint32 srcRepNum = numCheckpoints[srcRep];
                 uint96 srcRepOld = srcRepNum > 0 ? checkpoints[srcRep][srcRepNum - 1].votes : 0;
-                uint96 srcRepNew = sub96(srcRepOld, amount, "Quick::_moveVotes: vote amount underflows");
+                uint96 srcRepNew = sub96(srcRepOld, amount, "Yeeld::_moveVotes: vote amount underflows");
                 _writeCheckpoint(srcRep, srcRepNum, srcRepOld, srcRepNew);
             }
 
             if (dstRep != address(0)) {
                 uint32 dstRepNum = numCheckpoints[dstRep];
                 uint96 dstRepOld = dstRepNum > 0 ? checkpoints[dstRep][dstRepNum - 1].votes : 0;
-                uint96 dstRepNew = add96(dstRepOld, amount, "Quick::_moveVotes: vote amount overflows");
+                uint96 dstRepNew = add96(dstRepOld, amount, "Yeeld::_moveVotes: vote amount overflows");
                 _writeCheckpoint(dstRep, dstRepNum, dstRepOld, dstRepNew);
             }
         }
     }
 
     function _writeCheckpoint(address delegatee, uint32 nCheckpoints, uint96 oldVotes, uint96 newVotes) internal {
-      uint32 blockNumber = safe32(block.number, "Quick::_writeCheckpoint: block number exceeds 32 bits");
+      uint32 blockNumber = safe32(block.number, "Yeeld::_writeCheckpoint: block number exceeds 32 bits");
 
       if (nCheckpoints > 0 && checkpoints[delegatee][nCheckpoints - 1].fromBlock == blockNumber) {
           checkpoints[delegatee][nCheckpoints - 1].votes = newVotes;
@@ -557,23 +551,23 @@ contract Quick {
     }
 
     function _mint(address dst, uint rawAmount) internal {
-        require(dst != address(0), "Quick::mint: cannot transfer to the zero address");
+        require(dst != address(0), "Yeeld::mint: cannot transfer to the zero address");
 
         // mint the amount
-        uint96 amount = safe96(rawAmount, "Quick::mint: amount exceeds 96 bits");
-        totalSupply = safe96(SafeMath.add(totalSupply, amount), "Quick::mint: totalSupply exceeds 96 bits");
+        uint96 amount = safe96(rawAmount, "Yeeld::mint: amount exceeds 96 bits");
+        totalSupply = safe96(SafeMath.add(totalSupply, amount), "Yeeld::mint: totalSupply exceeds 96 bits");
 
         // transfer the amount to the recipient
-        balances[dst] = add96(balances[dst], amount, "Quick::mint: transfer amount overflows");
+        balances[dst] = add96(balances[dst], amount, "Yeeld::mint: transfer amount overflows");
         emit Transfer(address(0), dst, amount);
 
     }
 
     function _burn(address account, uint96 amount) internal {
-        require(account != address(0), "Quick:: burn from the zero address");
+        require(account != address(0), "Yeeld:: burn from the zero address");
 
-        balances[account] = sub96(balances[account], amount, "Quick:: burn amount exceeds balance");
-        totalSupply = sub96(safe96(totalSupply, "Quick:: totalSupply exceeds 96 bits"), amount, "Quick:: burn amount exceeds total supply");
+        balances[account] = sub96(balances[account], amount, "Yeeld:: burn amount exceeds balance");
+        totalSupply = sub96(safe96(totalSupply, "Yeeld:: totalSupply exceeds 96 bits"), amount, "Yeeld:: burn amount exceeds total supply");
         emit Transfer(account, address(0), amount);
     }
 }
