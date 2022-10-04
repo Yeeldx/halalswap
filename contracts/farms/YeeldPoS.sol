@@ -188,7 +188,7 @@ library SafeMath {
     }
 }
 
-contract Yeeld {
+contract YeeldPoS {
     /// @notice EIP-20 token name for this token
     string public constant name = "Yeeldswap";
 
